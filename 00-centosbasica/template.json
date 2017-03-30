@@ -200,7 +200,6 @@
             "[variables('customscripturl')]"
           ],
           "commandToExecute": "[variables('customscriptcommand')]",
-          "protectedSettings": {}
         }
       }
     }
