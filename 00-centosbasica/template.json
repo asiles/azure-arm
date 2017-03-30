@@ -55,7 +55,7 @@
 
     "testvmImagePublisher": "OpenLogic",
     "testvmImageOffer": "CentOS",
-    "testvmOSDiskName": "testvmOSDisk",
+    "testvmOSDiskName": "[concat(parameters('testvmName'), 'OSDisk')]",
     "testvmVmSize": "Standard_D2_v2",
     "testvmVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VnetName'))]",
     "testvmSubnetRef": "[concat(variables('testvmVnetID'), '/subnets/', variables('testredSubnet1Name'))]",

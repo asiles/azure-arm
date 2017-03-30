@@ -14,4 +14,8 @@ New-AzureRmResourceGroupDeployment -Name <NOMBRE DEL DESPLIEGUE> -ResourceGroupN
 - testvmAdminUserName: Stringe - user
 - VnetName: String - nombre de la VNET
 - SubNetName: String - Frontend/Backend/DB
-- storageaccountnameprefix: String - Prefijo que sumará al id del resource group.
+- storageaccountnameprefix: String - Prefijo que sumará al id del resource group. No puede pasar de 15 caracteres.
+
+## Despliegue:
+
+Crea una Storage Account, una VNET con 1 Subnet y una Máquina Virtual Cent0s
