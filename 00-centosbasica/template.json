@@ -1,0 +1,187 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "testvmName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "testvmAdminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "testvmAdminPassword": {
+      "type": "securestring"
+    },
+    "testvmCentosOSVersion": {
+      "type": "string",
+      "defaultValue": "7.3",
+      "allowedValues": [
+        "7.2n",
+        "7.3"
+      ]
+    },
+    "VnetName": {
+      "type": "string"
+    },
+    "SubNetName": {
+      "type": "string",
+      "allowedValues": [
+        "Frontend",
+        "Backend",
+        "DB"
+      ]
+    },
+    "storageaccountvmType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "storageaccountnameprefix": {
+      "type": "string"
+    }
+
+  },
+  "variables": {
+    "testredPrefix": "10.0.0.0/16",
+    "testredSubnet1Name": "[parameters('SubNetName')]",
+    "testredSubnet1Prefix": "10.0.0.0/24",
+
+    "testvmImagePublisher": "OpenLogic",
+    "testvmImageOffer": "CentOS",
+    "testvmOSDiskName": "testvmOSDisk",
+    "testvmVmSize": "Standard_D2_v2",
+    "testvmVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VnetName'))]",
+    "testvmSubnetRef": "[concat(variables('testvmVnetID'), '/subnets/', variables('testredSubnet1Name'))]",
+    "testvmStorageAccountContainerName": "vhds",
+    "testvmNicName": "[concat(parameters('testvmName'), 'NetworkInterface')]",
+    "storageaccountvmName": "[concat(parameters('storageaccountnameprefix'), uniqueString(resourceGroup().id))]",
+    "storageAccountResourceGroup": "[resourceGroup().name]"
+
+
+
+  },
+  "resources": [
+    {
+      "name": "[parameters('VnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[parameters('VnetName')]"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('testredPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('testredSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('testredSubnet1Prefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('testvmNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('VnetName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccountvmName'))]"
+      ],
+      "tags": {
+        "displayName": "testvmNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('testvmSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('testvmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "australiasoutheast",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('testvmNicName'))]"
+      ],
+      "tags": {
+        "displayName": "[parameters('testvmName')]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('testvmVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('testvmName')]",
+          "adminUsername": "[parameters('testvmAdminUsername')]",
+          "adminPassword": "[parameters('testvmAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('testvmImagePublisher')]",
+            "offer": "[variables('testvmImageOffer')]",
+            "sku": "[parameters('testvmCentosOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "testvmOSDisk",
+            "vhd": {
+              "uri": "[concat(reference(resourceId(variables('storageAccountResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageaccountvmName')), '2016-01-01').primaryEndpoints.blob, variables('testvmStorageAccountContainerName'), '/', variables('testvmOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('testvmNicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('storageaccountvmName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('storageaccountvmType')]"
+      },
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "[variables('storageaccountvmName')]"
+      },
+      "kind": "Storage"
+    }
+    
+
+  ],
+  "outputs": {
+
+  }
+}
