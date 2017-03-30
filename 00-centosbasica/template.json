@@ -49,7 +49,7 @@
 
   },
   "variables": {
-    "scriptsBaseUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/ansible-advancedlinux/",
+    "scriptsBaseUrl": "https://raw.githubusercontent.com/asiles/azure-arm/master/00-centosbasica/",
     "testredPrefix": "10.0.0.0/16",
     "testredSubnet1Name": "[parameters('SubNetName')]",
     "testredSubnet1Prefix": "10.0.0.0/24",
@@ -63,7 +63,10 @@
     "testvmStorageAccountContainerName": "vhds",
     "testvmNicName": "[concat(parameters('testvmName'), 'NetworkInterface')]",
     "storageaccountvmName": "[concat(parameters('storageaccountnameprefix'), uniqueString(resourceGroup().id))]",
-    "storageAccountResourceGroup": "[resourceGroup().name]"
+    "storageAccountResourceGroup": "[resourceGroup().name]",
+    "customscriptfile": "installepel.sh",
+    "customscriptcommand": "[concat('bash ',variables('customscriptfile'))]",
+    "customscripturl": "[concat(variables('scriptsBaseUrl'),variables('customscriptfile'))]"
 
 
 
@@ -194,9 +197,9 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "[variables('customScriptAnsibleUrl')]"
+            "[variables('customscripturl')]"
           ],
-          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'),variables('customScriptAnsibleParameters'),' -a ', parameters('sshStorageAccountName'),' -k ', parameters('sshStorageAccountKey'))]",
+          "commandToExecute": "[variables('customscriptcommand')]",
           "protectedSettings": {}
         }
       }
