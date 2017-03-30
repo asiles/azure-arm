@@ -1,14 +1,14 @@
-#Cent0s básica V1
+# Cent0s básica V1
 
 
-##Uso:
+## Uso:
 
 ```
 New-AzureRmResourceGroupDeployment -Name <NOMBRE DEL DESPLIEGUE> -ResourceGroupName <NOMBRE DEL RESOURCE GROUP> -TemplateFile template.json -Verbose
 ```
 
 
-##Parametros de output:
+## Parametros de output:
 
 - testvmName: String - nombre de la máquina
 - testvmAdminUserName: Stringe - user
