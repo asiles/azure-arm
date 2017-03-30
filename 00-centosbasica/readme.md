@@ -18,4 +18,6 @@ New-AzureRmResourceGroupDeployment -Name <NOMBRE DEL DESPLIEGUE> -ResourceGroupN
 
 ## Despliegue:
 
-Crea una Storage Account, una VNET con 1 Subnet y una Máquina Virtual Cent0s
+Crea una Storage Account, una VNET con 1 Subnet y una Máquina Virtual Cent0s.
+
+Luego la actualiza e instala el Epel.
