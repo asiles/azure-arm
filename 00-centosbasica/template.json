@@ -184,7 +184,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "InstallEpel",
+      "name": "[concat(parameters('testvmName'), '/InstallEpel')]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "dependsOn": [
