@@ -49,6 +49,7 @@
 
   },
   "variables": {
+    "scriptsBaseUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/ansible-advancedlinux/",
     "testredPrefix": "10.0.0.0/16",
     "testredSubnet1Name": "[parameters('SubNetName')]",
     "testredSubnet1Prefix": "10.0.0.0/24",
@@ -172,14 +173,34 @@
       "sku": {
         "name": "[parameters('storageaccountvmType')]"
       },
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "[variables('storageaccountvmName')]"
       },
       "kind": "Storage"
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "InstallEpel",
+      "apiVersion": "2015-06-15",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/VirtualMachines', parameters('testvmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[variables('customScriptAnsibleUrl')]"
+          ],
+          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'),variables('customScriptAnsibleParameters'),' -a ', parameters('sshStorageAccountName'),' -k ', parameters('sshStorageAccountKey'))]",
+          "protectedSettings": {}
+        }
+      }
     }
-    
-
   ],
   "outputs": {
 
