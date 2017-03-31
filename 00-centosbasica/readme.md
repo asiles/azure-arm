@@ -21,3 +21,13 @@ New-AzureRmResourceGroupDeployment -Name <NOMBRE DEL DESPLIEGUE> -ResourceGroupN
 Crea una Storage Account, una VNET con 1 Subnet y una Máquina Virtual Cent0s.
 
 Luego la actualiza e instala el Epel.
+
+
+39 $AadTenant = Get-AADTenantGUID -AADTenantName "innovationmediacloud.onmicrosoft.com"
+40 Add-AzureStackAzureRmEnvironment -AadTenant $AadTenant -Name AzureStack
+41 Login-AzureRmAccount -EnvironmentName "AzureStack" -TenantId $AadTenant
+42 Login-AzureRmAccount -EnvironmentName "AzureStack" -TenantId $AadTenant -Credential(Get-Credential)
+43 Get-AzureRmResourceGroup
+44 clear
+
+> Igual
