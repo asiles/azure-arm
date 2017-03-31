@@ -73,3 +73,23 @@ Con eso ya tenemos los datos que necesitamos para subir la imagen:
 - SKU: 7.2
 - Version: 1.0.0
 - OS Disk Blob URI:	https://tenantartifacts.blob.azurestack.local/image/OpenLogic-CentOS-72-20160407-en-us-30GB-stack.vhd
+
+Faltaría crear la imagen de galeria
+
+otra opción:
+
+Importamos el módulo para cargar imagenes:
+
+```
+Import-Module .\ComputeAdmin\AzureStack.ComputeAdmin.psm1
+```
+Y lanzamos:
+
+```
+Add-VMImage -publisher 'OpenLogic' -offer 'CentOS' -sku "7.2-1" -version '1.0.0' -osType 'Linux' -osDiskLocalPath 'E:\IsoS\OpenLogic-CentOS-7.2-Oct-04-2016.vhd' -tenantID 'innovationmediacloud.onmicrosoft.com' -azureStackCredentials (Get-Credentials)
+```
+
+Y lo hace todo, incluso meter la imagen de galeria.
+
+
+> OJO! Que las SKUS están mal. No acepta 7.2 por ejemplo. 
